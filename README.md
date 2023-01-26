@@ -21,3 +21,8 @@ BracketGen is a website which allows you to generate brackets for your events. I
 - Get a live notification when someone views your bracket.
 
 #### Sketch
+![sketch1](https://user-images.githubusercontent.com/25139942/214756833-d0670b70-34ea-45f2-a12f-29514f27a56f.JPG)
+![sketch2](https://user-images.githubusercontent.com/25139942/214756842-87fecf2e-eb1c-439b-9d54-c2765cdb2d4b.JPG)
+![sketch3](https://user-images.githubusercontent.com/25139942/214756846-2c5b0bd8-b5f7-43d1-bc19-03eee2ba1238.JPG)
+![sketch4](https://user-images.githubusercontent.com/25139942/214756849-740e9acd-d20d-4bb8-886f-c03b46644cae.JPG)
+![sketch5](https://user-images.githubusercontent.com/25139942/214756851-6d810512-cd7f-4a03-8f16-064d5de452e0.JPG)
