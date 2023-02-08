@@ -26,3 +26,6 @@ BracketGen is a website which allows you to generate brackets for your events. I
 ![sketch3](https://user-images.githubusercontent.com/25139942/214756846-2c5b0bd8-b5f7-43d1-bc19-03eee2ba1238.JPG)
 ![sketch4](https://user-images.githubusercontent.com/25139942/214756849-740e9acd-d20d-4bb8-886f-c03b46644cae.JPG)
 ![sketch5](https://user-images.githubusercontent.com/25139942/214756851-6d810512-cd7f-4a03-8f16-064d5de452e0.JPG)
+
+### Assignment: Simon HTML
+From this assignment, I learned how to make a website take you to another page when you submit a form. I also learned some SVG tools, such as the circle tag. Additionally, I got some practice using div tags to add separation between elements.
