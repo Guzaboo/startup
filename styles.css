@@ -1,11 +1,24 @@
+@import
+url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&display=swap');
+
+@media (orientation: portrait) {
+    div {
+        xtransform: rotate(270deg);
+    }
+}
+
 html {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Comfortaa, Arial, Helvetica, sans-serif;
 }
 
 nav {
     text-align: right;
-    margin-top: 1em;
-    margin-bottom: 1em;
+    float: right;
+    flex: .7 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin: auto;
+    margin-right: 0;
 }
 
 nav > a {
@@ -24,6 +37,10 @@ nav > a {
     font-size: 5em;
     margin-top: 8%;
     margin-bottom: 12%;
+}
+
+#bracket-page > h1 {
+    text-align: center;
 }
 
 #home > p {
@@ -45,4 +62,52 @@ footer {
 
 #text-gap {
     width: 2em;
+}
+
+#bracket-team {
+    border: 1px solid;
+    border-color: black;
+    width: 10em;
+    height: 2em;
+}
+
+#line-below {
+    border-bottom: 1px solid;
+    width: 2em;
+    height: 2em;
+}
+
+#line-right {
+    border-right: 1px solid;
+    width: 2em;
+    height: 2em;
+}
+
+#line-right-below {
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    width: 2em;
+    height: 2em;
+}
+
+table#bracket {
+    margin-left: 10%;
+}
+
+header > h1 {
+    float: left;
+    flex: .3 0px;
+    font-size: 2.3em;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+header {
+    height: 2.3em;
+    display: flex;
+    flex-direction: row;
+}
+
+table {
+    border-collapse: collapse;
 }
