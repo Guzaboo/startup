@@ -13,7 +13,7 @@ html {
 
 nav {
     text-align: right;
-    flex: .7 0px;
+    xflex: .7 0px;
     margin-top: 0px;
     margin-bottom: 0px;
     margin: auto;
@@ -50,13 +50,16 @@ nav > a {
     font-size: 2em;
     padding: 2%;
     margin-top: 12%;
+    margin-bottom: 1.5em;
 }
 
 footer {
     position: absolute;
     bottom: 0;
-    width: 100%;
+    left: 0;
+    right: 0;
     text-align: center;
+    height: 4em;
 }
 
 #text-gap {
@@ -94,7 +97,7 @@ table#bracket {
 }
 
 header > h1 {
-    flex: .3 0px;
+    xflex: .3 0px;
     font-size: 2.3em;
     margin-top: 0;
     margin-bottom: 0;
@@ -109,4 +112,13 @@ header {
 
 table {
     border-collapse: collapse;
+}
+
+body {
+    position: relative;
+    min-height: 100vh;
+}
+
+#content-wrap {
+    padding-bottom: 4em;
 }
