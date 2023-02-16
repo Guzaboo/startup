@@ -33,9 +33,15 @@ nav > a {
 }
 
 #home > h1 {
-    font-size: 5em;
+    font-size: 8.5vw;
     margin-top: 8%;
     margin-bottom: 12%;
+}
+
+@media(min-width: 950px) {
+    #home > h1 {
+        font-size: 5em;
+    }
 }
 
 #bracket-page > h1 {
