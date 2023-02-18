@@ -29,3 +29,6 @@ BracketGen is a website which allows you to generate brackets for your events. I
 
 ### Assignment: Simon HTML
 From this assignment, I learned how to make a website take you to another page when you submit a form. I also learned some SVG tools, such as the circle tag. Additionally, I got some practice using div tags to add separation between elements.
+
+### Assignment: Simon CSS
+From this assignment, I got some valuable practice using the bootstrap framework to style a page. I also got practice with flex and grid and responsive design techniques.
