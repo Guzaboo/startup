@@ -63,18 +63,21 @@
                 </div>
             </nav>
             <main>
-                <h1>Bracket Wizard</h1>
+                <h1>Bracket Generator</h1>
                 <div class = "bracket-wizard">
-                    <p>List the participants below (one per line).</p>
-                    <form>
-                        <textarea class="form-control" rows="8"></textarea>
+                    <form class="needs-validation">
+                        <label for="participantsList" class="form-label">List the participants below (one per line).</label>
+                        <textarea id="participantsList" class="form-control" rows="8" required></textarea>
+                        <div class="invalid-feedback">
+                            Please enter at least two teams.
+                        </div>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
                             <label class="form-check-label" for="flexCheckChecked">
-                              Randomize teams
+                                Randomize participants
                             </label>
-                          </div>
-                          <a type="submit" class="btn btn-primary" onclick="window.location.href = 'testbracket.html';">Generate</a>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Generate</button>
                     </form>
                 </div>
             </main>
