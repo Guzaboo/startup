@@ -206,6 +206,7 @@ h1 {
     flex-direction: column;
     align-items: center;
     width: 100%;
+    margin-bottom: 2em;
 }
 
 .bracket-list {
@@ -234,6 +235,7 @@ h1 {
     width: 100%;
     display: flex;
     flex-direction: row;
+    align-items: center;
     padding-top: .5em;
     padding-bottom: .5em;
     padding-left: .5em;
