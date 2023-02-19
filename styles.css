@@ -30,6 +30,7 @@ nav > a {
     text-align: center;
     width: 55%;
     margin: auto;
+    margin-bottom: 2em;
 }
 
 #home > h1 {
@@ -147,6 +148,10 @@ body {
 
 #content-wrap {
     padding-bottom: 4em;
+}
+
+.navbar {
+    min-height: 86px;
 }
 
 .navbar-nav {
