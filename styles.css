@@ -212,7 +212,7 @@ body {
 }
 
 .navbar-brand {
-    --bs-navbar-brand-font-size: 2.5rem;
+    --bs-navbar-brand-font-size: calc(2rem + .5vw);
 }
 
 body {
@@ -277,6 +277,8 @@ h1 {
     align-items: center;
     padding-top: 1em;
     padding-bottom: 1em;
+    padding-left: 1.5vw;
+    padding-right: 1.5vw;
 }
 
 .bracket-list-item {
@@ -285,8 +287,6 @@ h1 {
     justify-content: space-between;
     align-items: center;
     width: calc(100% - 3em);
-    margin-left: 1.5em;
-    margin-right: 1.5em;
 }
 
 .bracket-list-link {
@@ -310,17 +310,25 @@ h1 {
 }
 
 .bracket-list-item .bracket-list-title {
-    width: calc(100% / 3);
+    flex: 1;
+}
+
+.bracket-list-item .bracket-list-info-block {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
 }
 
 .bracket-list-item .bracket-list-type {
     text-align: center;
-    width: calc(100% / 3);
+    flex: 1;
 }
 
 .bracket-list-item .bracket-list-num-participants {
     text-align: end;
-    width: calc(100% / 3);
+    flex: 1;
 }
 
 .bracket-list-item .bracket-list-delete {
@@ -329,11 +337,59 @@ h1 {
     padding-bottom: .5em;
     padding-left: .5em;
     padding-right: .5em;
+    flex: calc(1.5em + 2.1vw);
+}
+
+.bracket-list-delete img {
+    max-width: 100%;
+    height: auto;
 }
 
 .bracket-list-delete:hover {
     background-color: var(--bs-gray-600);
     border-radius: .375em;
+}
+
+.bracket-list-item h4 {
+    font-size: 2vw;
+    padding: 0;
+    margin: 0;
+    white-space: nowrap;
+}
+
+@media(max-width: 500px) {
+    .bracket-list-item .bracket-list-title {
+        font-size: calc((1.275rem + .3vw) / 1.7);
+        flex-shrink: 1;
+        white-space: normal;
+        text-align: center;
+    }
+
+    .bracket-list-item .bracket-list-info-block {
+        flex: 0;
+        flex-direction: column;
+    }
+
+    .bracket-list-item .bracket-list-type {
+        font-size: calc((1.275rem + .3vw) / 2);
+    }
+
+    .bracket-list-item .bracket-list-num-participants {
+        text-align: center;
+        font-size: calc((1.275rem + .3vw) / 2);
+    }
+
+    .bracket-list-item .bracket-list-delete {
+        flex: calc(3em + 2.1vw);
+        flex-shrink: 0;
+    }
+}
+
+@media(max-width: 450px) {
+    .bracket-list.item {
+        width:max-content;
+        overflow-x: scroll;
+    }
 }
 
 .dropdown-menu {
