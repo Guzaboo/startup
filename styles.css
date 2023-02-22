@@ -264,7 +264,7 @@ h1 {
 
 .bracket-list {
     border: solid;
-    border-radius: 1em;
+    border-radius: .75em;
     width: 80%;
     display: flex;
     grid-template-columns: 40% 30% 30%;
@@ -301,6 +301,7 @@ h1 {
 
 .bracket-list-link:hover {
     background-color: var(--bs-gray-600);
+    border-radius: .375em;
 }
 
 .bracket-list-item .bracket-list-title {
@@ -327,6 +328,7 @@ h1 {
 
 .bracket-list-delete:hover {
     background-color: var(--bs-gray-600);
+    border-radius: .375em;
 }
 
 .dropdown-menu {
