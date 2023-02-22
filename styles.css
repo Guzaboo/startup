@@ -11,6 +11,11 @@ html {
     font-family: Comfortaa, Arial, Helvetica, sans-serif;
 }
 
+:root {
+    --footer-size: 64px;
+    --header-size: 86px;
+}
+
 nav {
     text-align: right;
     xflex: .7 0px;
@@ -43,7 +48,7 @@ nav > a {
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
-    min-height: calc(100vh - 86px - 64px);
+    min-height: calc(100vh - var(--header-size) - var(--footer-size));
 }
 
 .big-space {
@@ -106,7 +111,7 @@ footer {
     left: 0;
     right: 0;
     text-align: center;
-    height: 64px;
+    height: var(--footer-size);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -191,14 +196,14 @@ body {
 }
 
 #content-wrap {
-    padding-bottom: 64px;
+    padding-bottom: var(--footer-size);
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
 .navbar {
-    min-height: 86px;
+    min-height: var(--header-size);
     flex: 0;
 }
 
@@ -338,7 +343,7 @@ h1 {
 
 @media(max-height: 500px) {
     footer {
-        bottom: -64px;
+        bottom: -var(--footer-size);
     }
 
     #content-wrap {
