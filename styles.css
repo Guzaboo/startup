@@ -286,7 +286,7 @@ h1 {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    width: calc(100% - 3em);
+    width: 100%;
 }
 
 .bracket-list-link {
@@ -380,7 +380,7 @@ h1 {
     }
 
     .bracket-list-item .bracket-list-delete {
-        flex: calc(3em + 2.1vw);
+        flex: calc(2em + 3.1vw);
         flex-shrink: 0;
     }
 }
