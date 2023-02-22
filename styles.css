@@ -159,6 +159,11 @@ footer > p {
     height: 2em;
 }
 
+#bracket-empty {
+    width: 10em;
+    height: 2em;
+}
+
 table#bracket {
     margin-left: 10%;
     overflow-x: scroll;
