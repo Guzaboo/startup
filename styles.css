@@ -253,6 +253,16 @@ body {
     border-color: white !important;
 }
 
+.format-picker {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.format-picker * {
+    padding-right: 1em;
+}
+
 h1 {
     margin-top: 1.5em !important;
     text-align: center;
