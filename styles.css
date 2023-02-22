@@ -26,48 +26,78 @@ nav > a {
     font-size: 1.3em;
 }
 
-main {
+.home-main {
     xheight: 100%;
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
 
 #home {
-    text-align: center;
     width: 55%;
-    height:100%;
-    margin: auto;
+    xmargin: auto;
     xmargin-bottom: 2em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    min-height: calc(100vh - 86px - 64px);
 }
 
-#home > h1 {
-    font-size: 8.5vw;
-    margin-top: 0 !important;
-    padding-top: 5%;
-    margin-bottom: 12%;
+.big-space {
+  flex: 3;
 }
 
-@media(min-width: 950px) {
-    #home > h1 {
-        font-size: 5em;
-    }
+.small-space {
+  flex: 1;
+}
+
+#home .h1-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: center;
+}
+
+#home h1 {
+    margin: 0 !important;
+    font-size: 15vmin !important;
 }
 
 #bracket-page > h1 {
     text-align: center;
 }
 
-#home > p {
-    font-size: 1.4em;
+#home .p-container {
+    flex: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
+#home p {
+    font-size: 3vmin;
+    text-align: center;
+    margin: 0;
+}
+
+#home .button-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+  }
+
 #big-button {
-    font-size: 2em;
-    padding: 2%;
-    margin-top: 1.5em;
-    margin-bottom: 5%;
+    font-size: 4vmin;
+    padding: 2vmin;
+    xmargin-top: 1.5em;
+    xmargin-bottom: 5%;
+    width: max-content;
 }
 
 footer {
@@ -76,7 +106,7 @@ footer {
     left: 0;
     right: 0;
     text-align: center;
-    height: 4em;
+    height: 64px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -161,7 +191,7 @@ body {
 }
 
 #content-wrap {
-    padding-bottom: 4em;
+    padding-bottom: 64px;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -302,4 +332,14 @@ h1 {
 .dropdown-menu {
     background-color: var(--bs-gray-700) !important;
     color: white !important;
+}
+
+@media(max-height: 500px) {
+    footer {
+        bottom: -64px;
+    }
+
+    #content-wrap {
+        padding: 0;
+    }
 }
