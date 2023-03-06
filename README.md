@@ -32,3 +32,6 @@ From this assignment, I learned how to make a website take you to another page w
 
 ### Assignment: Simon CSS
 From this assignment, I got some valuable practice using the bootstrap framework to style a page. I also got practice with flex and grid and responsive design techniques.
+
+### Assignment: Simon JavaScript
+It's pretty neat how easy it is to use localStorage to save/access data across pages. It's also nice how easy it is to load and play audio files. It really does seem like it was built for web programming!
