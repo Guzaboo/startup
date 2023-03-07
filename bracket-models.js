@@ -23,21 +23,53 @@ class Bracket {
     }
 
     #generateBrackets() {
-        this.final = new Match(this.participants[0], this.participants[1])
-        this.matches.set(this.final.id, this.final)
+        this.final = this.#addMatch(this.participants[0], this.participants[1])
+        let numParticipants = this.participants.length
+        let doubleElim = this.elim > 1
 
-        if(this.participants.length >= 3) {
-            let wSeq = winnersBracketSequence(this.participants.length)
-            for(let i = 2; i < this.participants.length; i++) {
-                this.#placeTeam(this.participants[i], this.final, wSeq[i - 2])
+        let wSeq
+        let lSeq
+        let wFinal = this.final
+        let lRoot
+
+        
+        if(doubleElim && numParticipants < 3) throw new Error("Double elimination requires 3+ participants! Received: " + numParticipants)
+
+        if(numParticipants >= 3) {
+            wSeq = winnersBracketSequence(numParticipants)
+            let m = this.#placeTeam(this.participants[2], wFinal, wSeq[0])
+            if(doubleElim) {
+                lRoot = this.#addMatch(new MatchReference(wFinal.id, true), new MatchReference(m.id, true))
+                this.final = this.#addMatch(new MatchReference(wFinal.id, false), new MatchReference(lRoot.id, false))
             }
         }
 
-        if(this.elim > 1) {
-            if(this.participants.length >= 5) {
-                let lSeq = losersBracketSequence(this.participants.length)
+        if(numParticipants >= 4) {
+            let m = this.#placeTeam(this.participants[3], wFinal, wSeq[1])
+            if(doubleElim) {
+                let m2 = this.#addMatch(lRoot.par2, new MatchReference(m.id, true))
+                lRoot.par2 = new MatchReference(m2.id, false)
+                lRoot = m2
             }
         }
+
+        if(numParticipants >= 5) {
+            lSeq = losersBracketSequence(numParticipants)
+
+            for(let i = 4; i < numParticipants; i++) {
+                let m = this.#placeTeam(this.participants[i], wFinal, wSeq[i - 2])
+                if(doubleElim) {
+                    this.#placeTeam(new MatchReference(m.id, true), lRoot, lSeq[i - 4])
+                }
+            }
+        }
+                //this.#placeTeamInLosers(this.participants[i], this.final, wSeq[i - 2])
+    }
+
+    #addMatch(par1, par2) {
+        let m = new Match(par1, par2)
+        this.matches.set(m.id, m)
+        return m
     }
 
     #placeTeam(participant, startingMatch, path) { // participant = Participant, startingMatch = Match, path = int[]
@@ -48,13 +80,13 @@ class Bracket {
         }
 
         if(path[path.length - 1]) {
-            let m = new Match(matchPtr.par1, participant)
+            let m = this.#addMatch(matchPtr.par1, participant)
             matchPtr.par1 = new MatchReference(m.id)
-            this.matches.set(m.id, m)
+            return m
         } else {
-            let m = new Match(matchPtr.par2, participant)
+            let m = this.#addMatch(matchPtr.par2, participant)
             matchPtr.par2 = new MatchReference(m.id)
-            this.matches.set(m.id, m)
+            return m
         }
     }
 
