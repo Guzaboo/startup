@@ -76,14 +76,14 @@ function generateBracket() {
     let brackets = JSON.parse(localStorage.getItem("brackets"))
     if(brackets === null) {
         brackets = []
-        brackets.push("brackets-" + bracket.id)
+        brackets.push(bracket.id)
         localStorage.setItem("brackets", JSON.stringify(brackets))
     } else {
-        brackets.push("brackets-" + bracket.id)
+        brackets.push(bracket.id)
         localStorage.setItem("brackets", JSON.stringify(brackets))
     }
 
-    localStorage.setItem("brackets-" + bracket.id, JSON.stringify(bracket))
+    localStorage.setItem(bracket.id, JSON.stringify(bracket))
 
     console.log(bracket)
 }
