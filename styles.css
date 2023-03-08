@@ -72,7 +72,7 @@ nav > a {
     font-size: 15vmin !important;
 }
 
-#bracket-page > h1 {
+.bracket-page > h1 {
     text-align: center;
 }
 
@@ -132,7 +132,7 @@ footer > p {
     height: 2em;
 }
 
-#bracket-page {
+.bracket-page {
     margin-top: 1.5em;
 }
 
@@ -164,13 +164,14 @@ footer > p {
     height: 2em;
 }
 
-table#bracket {
+table.bracket {
     margin-left: 10%;
     overflow-x: scroll;
     width: max-content;
     margin-bottom: 2em;
     margin-top: 1em;
     margin-right: 10%;
+    border-spacing: 0;
 }
 
 header > h1 {
