@@ -5,6 +5,7 @@ class Bracket {
     elim // int
     final // Match
     matches // Map from String to Match
+    date // long
 
     constructor(name, participants, elim = 1) {
         if(participants.length < 2) throw new Error("Not enough participants! Expected: 2+, Received: " + participants.length)
@@ -18,6 +19,7 @@ class Bracket {
         this.participants = participants;
         this.elim = elim
         this.matches = new Map()
+        this.date = new Date().getTime()
 
         this.#generateBrackets()
     }
