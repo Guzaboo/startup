@@ -313,6 +313,7 @@ h1 {
     padding-bottom: .5em;
     padding-left: .5em;
     padding-right: .5em;
+    cursor: pointer;
 }
 
 .bracket-list-link > * {
@@ -353,6 +354,7 @@ h1 {
     padding-left: .5em;
     padding-right: .5em;
     flex: calc(1.5em + 2.1vw);
+    cursor: pointer;
 }
 
 .bracket-list-delete img {
