@@ -7,21 +7,72 @@ class Bracket {
     matches // Map from String to Match
     date // long
 
-    constructor(name, participants, elim = 1) {
-        if(participants.length < 2) throw new Error("Not enough participants! Expected: 2+, Received: " + participants.length)
-        if(elim < 1) throw new Error("Must be at least single elimination! Received: " + elim)
-        if(elim > 2) throw new Error("N-elim brackets haven't been implemented yet! Received: N=" + elim)
-        
-        this.name = name
-        let brackets = JSON.parse(localStorage.getItem("brackets"))
-        if(brackets === null) brackets = []
-        this.id = this.#generateUUID()
-        this.participants = participants;
-        this.elim = elim
-        this.matches = new Map()
-        this.date = new Date().getTime()
+    constructor(name, participants, elim = 1, id, final, matches, date) {
+        if(id === undefined) {
+            if(participants.length < 2) throw new Error("Not enough participants! Expected: 2+, Received: " + participants.length)
+            if(elim < 1) throw new Error("Must be at least single elimination! Received: " + elim)
+            if(elim > 2) throw new Error("N-elim brackets haven't been implemented yet! Received: N=" + elim)
+            
+            this.name = name
+            let brackets = JSON.parse(localStorage.getItem("brackets"))
+            if(brackets === null) brackets = []
+            this.id = this.#generateUUID()
+            this.participants = participants;
+            this.elim = elim
+            this.matches = new Map()
+            this.date = new Date().getTime()
 
-        this.#generateBrackets()
+            this.#generateBrackets()
+        } else {
+            this.name = name
+            this.participants = participants
+            this.elim = elim
+            this.id = id
+            this.final = this.#createMatchFromJSON(final)
+            this.matches = this.#createMatchesFromJSON(new Map(Object.entries(matches)))
+            this.date = date
+        }
+    }
+
+    #createMatchesFromJSON(matches) {
+        let newM = new Map()
+        matches.forEach(m => newM.set(m.id, this.#createMatchFromJSON(m)))
+        return newM
+    }
+
+    #createMatchFromJSON(m) {
+        let par1 = m.par1.getLoser === undefined ? new Participant(m.par1.name) : new MatchReference(m.par1.id, m.par1.getLoser)
+        let par2 = m.par2.getLoser === undefined ? new Participant(m.par2.name) : new MatchReference(m.par2.id, m.par2.getLoser)
+        return new Match(par1, par2, m.id)
+    }
+
+    getRounds = function() {
+        let r = new Map()
+        r.set(this.final.id, this.final)
+
+        let rounds = [r]
+        while(!this.#isLeafRound(rounds[0])) {
+            r = new Map()
+            // put all the matches linked to from matches in rounds[0] into the new map
+            let lastR = rounds[0]
+            lastR.forEach((m) => {
+                if(m.par1 instanceof MatchReference) r.set(m.par1.id, this.matches.get(m.par1.id))
+                if(m.par2 instanceof MatchReference) r.set(m.par2.id, this.matches.get(m.par2.id))
+            })
+            // insert the new map at the start of rounds
+            rounds.unshift(r)
+        }
+
+        return rounds
+    }
+
+    #isLeafRound(r) {
+        let res = true;
+        r.forEach((m) => {
+            if(m.par1 instanceof MatchReference) res = false;
+            if(m.par2 instanceof MatchReference) res = false;
+        })
+        return res
     }
 
     #generateBrackets() {
@@ -130,8 +181,8 @@ class Match {
     par1 // MatchReference or Participant
     par2 // MatchReference or Participant
 
-    constructor(par1, par2) {
-        this.id = "M" + ++matchID
+    constructor(par1, par2, id = "M" + ++matchID) {
+        this.id = id
         this.par1 = par1
         this.par2 = par2
     }
