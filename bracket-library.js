@@ -21,6 +21,7 @@ if(brackets !== null) {
 
         let bracketLink = document.createElement("div")
         bracketLink.classList.add("bracket-list-link")
+        bracketLink.addEventListener("click", function(){ loadBracket(this)})
 
         let bracketTitle = document.createElement("h4")
         bracketTitle.classList.add("bracket-list-title")
@@ -66,4 +67,8 @@ function deleteBracket(e) {
     localStorage.setItem("brackets", JSON.stringify(brackets))
     localStorage.removeItem(e.parentElement.id)
     bracketList.removeChild(e.parentElement)
+}
+
+function loadBracket(e) {
+    window.location.href = "loadbracket.html?" + e.parentElement.id
 }
