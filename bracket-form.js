@@ -86,5 +86,5 @@ function generateBracket() {
     bracket.matches = Object.fromEntries(bracket.matches)
     localStorage.setItem(bracket.id, JSON.stringify(bracket))
 
-    console.log(bracket)
+    window.location.href = "loadbracket.html?" + bracket.id
 }
