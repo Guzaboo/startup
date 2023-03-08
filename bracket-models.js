@@ -12,7 +12,7 @@ class Bracket {
         if(elim > 2) throw new Error("N-elim brackets haven't been implemented yet! Received: N=" + elim)
         
         this.name = name
-        let brackets = localStorage.getItem("brackets")
+        let brackets = JSON.parse(localStorage.getItem("brackets"))
         if(brackets === null) brackets = []
         this.id = "B" + (brackets.length + 1)
         this.participants = participants;

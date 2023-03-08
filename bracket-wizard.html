@@ -81,8 +81,8 @@
                             </div>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-                            <label class="form-check-label" for="flexCheckChecked">
+                            <input class="form-check-input" type="checkbox" value="" id="randomizeSeeds">
+                            <label class="form-check-label" for="randomizeSeeds">
                                 Randomize seeding
                             </label>
                         </div>
@@ -101,7 +101,7 @@
                                 </label>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-light">Generate</button>
+                        <button class="btn btn-light" onclick="generateBracket()">Generate</button>
                     </form>
                 </div>
             </main>
@@ -109,6 +109,8 @@
         <footer class="bg-dark">
             <p>Khai Hirschi&nbsp&nbsp&nbsp&nbsp-&nbsp&nbsp&nbsp&nbsp<a href="https://github.com/Guzaboo/startup">GitHub</a></p>
         </footer>
+        <script src="bracket-generation.js"></script>
+        <script src="bracket-models.js"></script>
         <script src="bracket-form.js"></script>
     </body>
 </html>
