@@ -83,6 +83,7 @@ function generateBracket() {
         localStorage.setItem("brackets", JSON.stringify(brackets))
     }
 
+    bracket.matches = Object.fromEntries(bracket.matches)
     localStorage.setItem(bracket.id, JSON.stringify(bracket))
 
     console.log(bracket)
