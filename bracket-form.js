@@ -66,7 +66,7 @@ function generateBracket() {
     let nameBox = document.querySelector('#bracketName')
     let doubleElimCheck = document.querySelector('#doubleElim')
 
-    let name = nameBox.textContent
+    let name = nameBox.value
 
     let elim = 1
     if(doubleElimCheck.checked) elim = 2
