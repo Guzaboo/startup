@@ -125,7 +125,7 @@ footer > p {
     width: 2em;
 }
 
-#bracket-team {
+.bracket-team {
     border: 1px solid;
     xborder-color: black;
     width: 10em;
@@ -140,19 +140,19 @@ footer > p {
     overflow-x: auto;
 }
 
-#line-below {
+.line-below {
     border-bottom: 1px solid;
     width: 2em;
     height: 2em;
 }
 
-#line-right {
+.line-right {
     border-right: 1px solid;
     width: 2em;
     height: 2em;
 }
 
-#line-right-below {
+.line-right-below {
     border-right: 1px solid;
     border-bottom: 1px solid;
     width: 2em;
