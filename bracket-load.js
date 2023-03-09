@@ -35,10 +35,91 @@ function createBracketHTML(b) {
     let tableBody = document.createElement("tbody")
 
     if(b.elim === 1) {
-        let tr = document.createElement("tr")
         let rounds = b.getRounds()
-        tr.textContent = JSON.stringify(rounds.map((r) => Object.fromEntries(r)))
-        tableBody.appendChild(tr)
+
+        let maxNumMatches = rounds[0].size
+        let maxNumMatchesIndex = 0
+
+        if(rounds[1].size > maxNumMatches) {
+            maxNumMatches = rounds[1].size
+            maxNumMatchesIndex = 1
+        }
+
+        let tableHeight = maxNumMatches * 3 - 1
+        
+        for(let i = 0; i < tableHeight; i++) {
+            let row = document.createElement("tr")
+            tableBody.appendChild(row)
+        }
+
+        let counter = 0
+        rounds[0].forEach((m) => {
+            let row1 = document.createElement("td")
+            row1.classList.add("bracket-team")
+            row1.textContent = m.par1.name
+            row1.id = m.id
+            tableBody.children[counter++].appendChild(row1)
+            let row2 = document.createElement("td")
+            row2.classList.add("bracket-team")
+            row2.textContent = m.par2.name
+            row2.id = m.id
+            tableBody.children[counter++].appendChild(row2)
+            if(counter !== tableHeight) {
+                let row3 = document.createElement("td")
+                tableBody.children[counter++].appendChild(row3)
+            }
+        })
+
+        for(let i = 1; i < rounds.length; i++) {
+            for(let j = 0; j < tableBody.children.length; j++) {
+                tableBody.children[j].appendChild(document.createElement("td"))
+                tableBody.children[j].appendChild(document.createElement("td"))
+                tableBody.children[j].appendChild(document.createElement("td"))
+            }
+
+            counter = 0
+            rounds[i].forEach((m) => {
+                let firstLineRight = -1
+                let lastLineRight = -1
+                if(m.par1 instanceof MatchReference) {
+                    while(tableBody.children[counter].children[i*3 - 3].id !== m.par1.id) counter++
+                    tableBody.children[counter].children[i*3 - 2].classList.add("line-below")
+                    firstLineRight = counter + 1
+                }
+
+                while(tableBody.children[counter].children[i*3 - 3].id !== m.par2.id) counter++
+                tableBody.children[counter].children[i*3 - 2].classList.add("line-right-below")
+                lastLineRight = counter - 1
+
+                if(firstLineRight !== -1) {
+                    for(let j = firstLineRight; j <= lastLineRight; j++) {
+                        tableBody.children[j].children[i*3 - 2].classList.add("line-right")
+                    }
+
+                    let nextMatchIndex = Math.floor((firstLineRight + lastLineRight) / 2 + .5)
+
+                    tableBody.children[nextMatchIndex].children[i*3 - 1].classList.add("line-below")
+                    tableBody.children[nextMatchIndex].children[i*3].classList.add("bracket-team")
+                    tableBody.children[nextMatchIndex].children[i*3].id = m.id
+                    tableBody.children[nextMatchIndex + 1].children[i*3].classList.add("bracket-team")
+                    tableBody.children[nextMatchIndex + 1].children[i*3].id = m.id
+                } else {
+                    tableBody.children[lastLineRight].children[i*3 - 1].classList.add("line-below")
+                    tableBody.children[lastLineRight].children[i*3].classList.add("bracket-team")
+                    tableBody.children[lastLineRight].children[i*3].id = m.id
+                    tableBody.children[lastLineRight].children[i*3].id = m.par1.name
+                    tableBody.children[lastLineRight + 1].children[i*3].classList.add("bracket-team")
+                    tableBody.children[lastLineRight + 1].children[i*3].id = m.id
+                }
+
+
+            })
+        }
+
+        //console.log(tableBody.children[3])
+
+        //tr.textContent = JSON.stringify(rounds.map((r) => Object.fromEntries(r)))
+
     } else {
         let tr = document.createElement("tr")
         tr.textContent = "Double Elim not implemented yet"
