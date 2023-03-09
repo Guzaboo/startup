@@ -21,18 +21,26 @@ if(url === id) {
 
         bracketPage.textContent = ""
         bracketPage.appendChild(titleEl)
-        bracketPage.appendChild(createBracketHTML(bracket))
+
+        let container = document.createElement("div")
+        container.classList.add("bracket-container")
+
+        bracketPage.appendChild(container)
+        createBracketHTML(bracket, container)
     }
 }
 
-function createBracketHTML(b) {
-    let container = document.createElement("div")
-    container.classList.add("bracket-container")
+function createBracketHTML(b, container) {
+    //let container = document.createElement("div")
+    //container.classList.add("bracket-container")
 
     let table = document.createElement("table")
     table.classList.add("bracket")
 
     let tableBody = document.createElement("tbody")
+
+    table.appendChild(tableBody)
+    container.appendChild(table)
 
     if(b.elim === 1) {
         let rounds = b.getRounds()
@@ -53,6 +61,15 @@ function createBracketHTML(b) {
         }
 
         let counter = 0
+        if(rounds[0].size < 2*rounds[1].size) {
+            let row = document.createElement("tr")
+            tableBody.appendChild(row)
+            let td = document.createElement("td")
+            tableBody.children[0].appendChild(td)
+            counter++
+            tableHeight++
+        }
+
         rounds[0].forEach((m) => {
             let row1 = document.createElement("td")
             row1.classList.add("bracket-team")
@@ -107,7 +124,7 @@ function createBracketHTML(b) {
                     tableBody.children[lastLineRight].children[i*3 - 1].classList.add("line-below")
                     tableBody.children[lastLineRight].children[i*3].classList.add("bracket-team")
                     tableBody.children[lastLineRight].children[i*3].id = m.id
-                    tableBody.children[lastLineRight].children[i*3].id = m.par1.name
+                    tableBody.children[lastLineRight].children[i*3].textContent = m.par1.name
                     tableBody.children[lastLineRight + 1].children[i*3].classList.add("bracket-team")
                     tableBody.children[lastLineRight + 1].children[i*3].id = m.id
                 }
@@ -125,9 +142,6 @@ function createBracketHTML(b) {
         tr.textContent = "Double Elim not implemented yet"
         tableBody.appendChild(tr)
     }
-
-    table.appendChild(tableBody)
-    container.appendChild(table)
 
     return container
 }
