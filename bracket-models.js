@@ -46,7 +46,7 @@ class Bracket {
         return new Match(par1, par2, m.id)
     }
 
-    getRounds = function() { // TODO: Fix double elim so winners bracket rounds stay with their corresponding losers bracket rounds
+    getRounds = function() {
         this.matches.get(this.final.id).round = this.#setMatchRounds(this.final)
         let r = new Map()
         r.set(this.final.id, this.final)
@@ -95,16 +95,21 @@ class Bracket {
             par2Height = this.#setMatchRounds(this.matches.get(m.par2.id))
             if(m.par2.getLoser) par2Height--
         }
-        m.round = Math.max(par1Height, par2Height) + 1
+        this.#setMatchRoundsBacktrack(m, Math.max(par1Height, par2Height) + 1)
+        return m.round
+    }
+
+    #setMatchRoundsBacktrack(m, height) {
+        m.round = height
         if(m.par1 instanceof MatchReference) {
-            if(!m.par1.getLoser) this.matches.get(m.par1.id).round = m.round - 1
-            else this.matches.get(m.par1.id).round = m.round
+            if(!m.par1.getLoser) this.#setMatchRoundsBacktrack(this.matches.get(m.par1.id), height - 1)
+            else this.#setMatchRoundsBacktrack(this.matches.get(m.par1.id), height)
         }
         if(m.par2 instanceof MatchReference && !m.par2.getLoser) {
-            if(!m.par2.getLoser) this.matches.get(m.par2.id).round = m.round - 1
-            else this.matches.get(m.par2.id).round = m.round
+            if(!m.par2.getLoser) this.#setMatchRoundsBacktrack(this.matches.get(m.par2.id), height - 1)
+            else this.#setMatchRoundsBacktrack(this.matches.get(m.par2.id), height)
         }
-        return m.round
+
     }
 
     #isLeafRound(r) {

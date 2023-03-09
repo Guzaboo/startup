@@ -45,115 +45,10 @@ function createBracketHTML(b, container) {
     if(/*b.elim === 1*/true) {
         let rounds = b.getRounds()
 
-        let maxNumMatches = rounds[0].size
-        let maxNumMatchesIndex = 0
+        generateFirstTwoRoundsHTML(tableBody, rounds, b)
 
-        if(rounds.length > 1 && rounds[1].size > maxNumMatches) {
-            maxNumMatches = rounds[1].size
-            maxNumMatchesIndex = 1
-        }
-
-        let tableHeight = maxNumMatches * 3 - 1
-        
-        for(let i = 0; i < tableHeight; i++) {
-            let row = document.createElement("tr")
-            tableBody.appendChild(row)
-        }
-
-        let counter = 0
-        if(rounds.length > 1 && rounds[0].size < 2*rounds[1].size) {
-            let row = document.createElement("tr")
-            tableBody.appendChild(row)
-            let td = document.createElement("td")
-            tableBody.children[0].appendChild(td)
-            counter++
-            tableHeight++
-        }
-
-        rounds[0].forEach((m) => {
-            let row1 = document.createElement("td")
-            row1.classList.add("bracket-team")
-            row1.textContent = m.par1.name
-            row1.id = m.id
-            tableBody.children[counter++].appendChild(row1)
-            let row2 = document.createElement("td")
-            row2.classList.add("bracket-team")
-            row2.textContent = m.par2.name
-            row2.id = m.id
-            tableBody.children[counter++].appendChild(row2)
-            if(counter !== tableHeight) {
-                let row3 = document.createElement("td")
-                tableBody.children[counter++].appendChild(row3)
-            }
-        })
-
-        for(counter; counter < tableBody.children.length; counter++) {
-            let row3 = document.createElement("td")
-            tableBody.children[counter].appendChild(row3)
-        }
-
-        for(let i = 1; i < rounds.length; i++) {
-            for(let j = 0; j < tableBody.children.length; j++) {
-                tableBody.children[j].appendChild(document.createElement("td"))
-                tableBody.children[j].appendChild(document.createElement("td"))
-                tableBody.children[j].appendChild(document.createElement("td"))
-            }
-
-            counter = 0
-            rounds[i].forEach((m) => {
-                let firstLineRight = -1
-                let lastLineRight = -1
-                let prevMatchRoundTableIndex = i*3
-                if(m.par1 instanceof MatchReference && !m.par1.getLoser) {
-                    prevMatchRoundTableIndex = b.matches.get(m.par1.id).round*3
-                    while(tableBody.children[counter].children[prevMatchRoundTableIndex - 3].id !== m.par1.id) counter++
-                    tableBody.children[counter].children[prevMatchRoundTableIndex - 2].classList.add("line-below")
-                    firstLineRight = counter + 1
-                }
-
-                if(m.par2 instanceof MatchReference && !m.par2.getLoser) {
-                    prevMatchRoundTableIndex = b.matches.get(m.par2.id).round*3
-                    while(tableBody.children[counter].children[prevMatchRoundTableIndex - 3].id !== m.par2.id) counter++
-                    tableBody.children[counter].children[prevMatchRoundTableIndex - 2].classList.add("line-right-below")
-                    lastLineRight = counter - 1
-
-                    if(firstLineRight !== -1) {
-                        for(let j = firstLineRight; j <= lastLineRight; j++) {
-                            tableBody.children[j].children[prevMatchRoundTableIndex - 2].classList.add("line-right")
-                        }
-
-                        let nextMatchIndex = Math.floor((firstLineRight + lastLineRight) / 2 + .5)
-                        for(let j = prevMatchRoundTableIndex - 1; j <= i*3 - 1; j++) {
-                            tableBody.children[nextMatchIndex].children[j].classList.add("line-below")
-                        }
-                        tableBody.children[nextMatchIndex].children[i*3].classList.add("bracket-team")
-                        tableBody.children[nextMatchIndex].children[i*3].id = m.id
-                        tableBody.children[nextMatchIndex + 1].children[i*3].classList.add("bracket-team")
-                        tableBody.children[nextMatchIndex + 1].children[i*3].id = m.id
-                    } else {
-                        for(let j = prevMatchRoundTableIndex - 1; j <= i*3 - 1; j++) {
-                            tableBody.children[lastLineRight].children[j].classList.add("line-below")
-                        }
-                        tableBody.children[lastLineRight].children[i*3].classList.add("bracket-team")
-                        tableBody.children[lastLineRight].children[i*3].id = m.id
-                        tableBody.children[lastLineRight].children[i*3].textContent = m.par1.name
-                        tableBody.children[lastLineRight + 1].children[i*3].classList.add("bracket-team")
-                        tableBody.children[lastLineRight + 1].children[i*3].id = m.id
-                    }
-                } else {
-                    counter += 2
-                    tableBody.children[counter].children[i*3].classList.add("bracket-team")
-                    tableBody.children[counter].children[i*3].id = m.id
-                    tableBody.children[counter].children[i*3].textContent = m.par1.name
-                    counter++
-                    tableBody.children[counter].children[i*3].classList.add("bracket-team")
-                    tableBody.children[counter].children[i*3].id = m.id
-                    tableBody.children[counter].children[i*3].textContent = m.par2.name
-                    counter++
-                }
-
-
-            })
+        for(let i = 2; i < rounds.length; i++) {
+            generateNextRound(tableBody, rounds[i], i * 3, b)
         }
 
         //console.log(tableBody.children[3])
@@ -167,4 +62,188 @@ function createBracketHTML(b, container) {
     }
 
     return container
+}
+
+function generateFirstTwoRoundsHTML(tableBody, rounds, bracket) {
+    if(rounds.length === 1) {
+        generateReferenceRound(tableBody, rounds[0], 0)
+    } else {
+        if(rounds[0].size > rounds[1].size) {
+            generateReferenceRound(tableBody, rounds[0], 0)
+            generateNextRound(tableBody, rounds[1], 3, bracket)
+        } else {
+            generateReferenceRound(tableBody, rounds[1], 3)
+            generatePreviousRound(tableBody, rounds[0], 0, bracket)
+        }
+    }
+}
+
+function generateReferenceRound(tableBody, round, tableCol) {
+    let tableHeight = round.size * 3 - 1
+    for(let i = 0; i < tableHeight; i++) {
+        let row = document.createElement("tr")
+        for(let j = 0; j <= tableCol; j++) {
+            let cell = document.createElement("td")
+            row.appendChild(cell)
+        }
+        tableBody.appendChild(row)
+    }
+
+    let counter = 0
+    round.forEach((m) => {
+        tableBody.children[counter].children[tableCol].classList.add("bracket-team")
+        tableBody.children[counter].children[tableCol].textContent = m.par1.name
+        tableBody.children[counter].children[tableCol].id = m.id
+        counter++
+        
+
+        tableBody.children[counter].children[tableCol].classList.add("bracket-team")
+        tableBody.children[counter].children[tableCol].textContent = m.par2.name
+        tableBody.children[counter].children[tableCol].id = m.id
+        counter++
+
+        counter++
+    })
+}
+
+function generateNextRound(tableBody, round, tableCol, bracket) {
+    for (const entry of round.entries()) {
+        let m = entry[1]
+        if(m.round*3 - 3 === tableCol) {
+            if(m.par1 instanceof Participant) prependRow(tableBody)
+            break
+        }
+    }
+
+    for(let i = 0; i < tableBody.children.length; i++) { // ensure there are enough columns in each row so we don't go out of bounds
+        let tableRow = tableBody.children[i]
+        for(let j = tableRow.children.length; j <= tableCol; j++) tableRow.appendChild(document.createElement("td"))
+    }
+
+    let counter = 0
+    round.forEach((m) => {
+        let firstLineRight = -1
+        let lastLineRight = -1
+        let prevMatchRoundTableIndex = tableCol
+        if(m.par1 instanceof MatchReference && !m.par1.getLoser) {
+            prevMatchRoundTableIndex = bracket.matches.get(m.par1.id).round*3
+            while(tableBody.children[counter].children[prevMatchRoundTableIndex - 3].id !== m.par1.id) counter++
+            tableBody.children[counter].children[prevMatchRoundTableIndex - 2].classList.add("line-below")
+            firstLineRight = counter + 1
+        }
+
+        if(m.par2 instanceof MatchReference && !m.par2.getLoser) {
+            prevMatchRoundTableIndex = bracket.matches.get(m.par2.id).round*3
+            while(tableBody.children[counter].children[prevMatchRoundTableIndex - 3].id !== m.par2.id) counter++
+            tableBody.children[counter].children[prevMatchRoundTableIndex - 2].classList.add("line-right-below")
+            lastLineRight = counter - 1
+
+            if(firstLineRight !== -1) {
+                for(let j = firstLineRight; j <= lastLineRight; j++) {
+                    tableBody.children[j].children[prevMatchRoundTableIndex - 2].classList.add("line-right")
+                }
+
+                let nextMatchIndex = Math.floor((firstLineRight + lastLineRight) / 2 + .5)
+                for(let j = prevMatchRoundTableIndex - 1; j <= tableCol - 1; j++) {
+                    tableBody.children[nextMatchIndex].children[j].classList.add("line-below")
+                }
+                tableBody.children[nextMatchIndex].children[tableCol].classList.add("bracket-team")
+                tableBody.children[nextMatchIndex].children[tableCol].id = m.id
+                tableBody.children[nextMatchIndex + 1].children[tableCol].classList.add("bracket-team")
+                tableBody.children[nextMatchIndex + 1].children[tableCol].id = m.id
+            } else {
+                for(let j = prevMatchRoundTableIndex - 1; j <= tableCol - 1; j++) {
+                    tableBody.children[lastLineRight].children[j].classList.add("line-below")
+                }
+                tableBody.children[lastLineRight].children[tableCol].classList.add("bracket-team")
+                tableBody.children[lastLineRight].children[tableCol].id = m.id
+                tableBody.children[lastLineRight].children[tableCol].textContent = m.par1.name
+                tableBody.children[lastLineRight + 1].children[tableCol].classList.add("bracket-team")
+                tableBody.children[lastLineRight + 1].children[tableCol].id = m.id
+                counter++
+            }
+        } else {
+            counter++
+            tableBody.children[counter].children[tableCol].classList.add("bracket-team")
+            tableBody.children[counter].children[tableCol].id = m.id
+            tableBody.children[counter].children[tableCol].textContent = m.par1.name
+            counter++
+            tableBody.children[counter].children[tableCol].classList.add("bracket-team")
+            tableBody.children[counter].children[tableCol].id = m.id
+            tableBody.children[counter].children[tableCol].textContent = m.par2.name
+            counter++
+        }
+    })
+}
+
+function generatePreviousRound(tableBody, round, tableCol, bracket) {
+    for(let i = tableBody.children.length - 1; i >= 0; i--) {
+        let cell = tableBody.children[i].children[tableCol + 3]
+        if(cell.classList.contains("bracket-team")) {
+            let m = bracket.matches.get(cell.id)
+            if(m.par2 instanceof MatchReference) appendRow(tableBody)
+            break
+        }
+    }
+
+    let counter = 0
+    round.forEach((m) => {
+        let id = m.id
+
+        for(let i = 0; i < tableBody.children.length; i++) {
+            let cell = tableBody.children[i].children[tableCol + 3]
+            if(cell.classList.contains("bracket-team")) {
+                let m2 = bracket.matches.get(cell.id)
+                if(m2.par1 instanceof MatchReference && !m2.par1.getLoser && m2.par1.id === id) {
+                    // put m before and above m2!
+                    tableBody.children[i].children[tableCol + 2].classList.add("line-below")
+                    tableBody.children[i].children[tableCol + 1].classList.add("line-right")
+                    tableBody.children[i - 1].children[tableCol + 1].classList.add("line-right")
+                    tableBody.children[i - 2].children[tableCol + 1].classList.add("line-below")
+
+                    tableBody.children[i - 1].children[tableCol].classList.add("bracket-team")
+                    tableBody.children[i - 2].children[tableCol].classList.add("bracket-team")
+                    tableBody.children[i - 1].children[tableCol].id = m.id
+                    tableBody.children[i - 2].children[tableCol].id = m.id
+
+                    if(m.par2 instanceof Participant) tableBody.children[i - 1].children[tableCol].textContent = m.par2.name
+                    if(m.par1 instanceof Participant) tableBody.children[i - 2].children[tableCol].textContent = m.par1.name
+
+                    break
+                } else if(m2.par2 instanceof MatchReference && !m2.par2.getLoser && m2.par2.id === id) {
+                    // put m before and below m2!
+                    tableBody.children[i].children[tableCol + 2].classList.add("line-below")
+                    tableBody.children[i + 1].children[tableCol + 1].classList.add("line-right-below")
+
+                    tableBody.children[i + 1].children[tableCol].classList.add("bracket-team")
+                    tableBody.children[i + 2].children[tableCol].classList.add("bracket-team")
+                    
+                    if(m.par1 instanceof Participant) tableBody.children[i + 1].children[tableCol].textContent = m.par1.name
+                    if(m.par2 instanceof Participant) tableBody.children[i + 2].children[tableCol].textContent = m.par2.name
+
+                    break
+                }
+            }
+        }
+    })
+}
+
+function prependRow(tableBody) {
+    let row = document.createElement("tr")
+
+    for(let i = 0; i < tableBody.children[0].children.length; i++) {
+        row.appendChild(document.createElement("td"))
+    }
+
+    tableBody.insertBefore(row, tableBody.firstElementChild)
+}
+
+function appendRow(tableBody) {
+    let row = document.createElement("tr")
+
+    for(let i = 0; i < tableBody.children[0].children.length; i++) {
+        row.appendChild(document.createElement("td"))
+    }
+
+    tableBody.appendChild(row)
 }
