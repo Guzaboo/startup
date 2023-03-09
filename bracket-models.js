@@ -46,19 +46,37 @@ class Bracket {
         return new Match(par1, par2, m.id)
     }
 
-    getRounds = function() {
+    getRounds = function() { // TODO: Fix double elim so winners bracket rounds stay with their corresponding losers bracket rounds
+        this.matches.get(this.final.id).round = this.#setMatchRounds(this.final)
         let r = new Map()
         r.set(this.final.id, this.final)
 
         let rounds = [r]
-        while(!this.#isLeafRound(rounds[0])) {
+        let backlog = []
+        let numRounds = this.final.round
+        while(rounds.length < numRounds) {
             r = new Map()
             // put all the matches linked to from matches in rounds[0] into the new map
             let lastR = rounds[0]
+
+            for(let i = 0; i < backlog.length; i++) {
+                if(backlog[i].round == numRounds - rounds.length) {
+                    r.set(backlog[i].id, backlog[i])
+                    backlog.splice(i--, 1)
+                }
+            }
+
             lastR.forEach((m) => {
-                if(m.par1 instanceof MatchReference) r.set(m.par1.id, this.matches.get(m.par1.id))
-                if(m.par2 instanceof MatchReference) r.set(m.par2.id, this.matches.get(m.par2.id))
+                if(m.par1 instanceof MatchReference && !m.par1.getLoser) {
+                    if(this.matches.get(m.par1.id).round + 1 == m.round) r.set(m.par1.id, this.matches.get(m.par1.id))
+                    else backlog.push(this.matches.get(m.par1.id))
+                }
+                if(m.par2 instanceof MatchReference && !m.par2.getLoser) {
+                    if(this.matches.get(m.par2.id).round + 1 == m.round) r.set(m.par2.id, this.matches.get(m.par2.id))
+                    else backlog.push(this.matches.get(m.par2.id))
+                }
             })
+
             // insert the new map at the start of rounds
             rounds.unshift(r)
         }
@@ -66,11 +84,34 @@ class Bracket {
         return rounds
     }
 
+    #setMatchRounds(m) {
+        let par1Height = 0
+        let par2Height = 0
+        if(m.par1 instanceof MatchReference) {
+            par1Height = this.#setMatchRounds(this.matches.get(m.par1.id))
+            if(m.par1.getLoser) par1Height--
+        }
+        if(m.par2 instanceof MatchReference) {
+            par2Height = this.#setMatchRounds(this.matches.get(m.par2.id))
+            if(m.par2.getLoser) par2Height--
+        }
+        m.round = Math.max(par1Height, par2Height) + 1
+        if(m.par1 instanceof MatchReference) {
+            if(!m.par1.getLoser) this.matches.get(m.par1.id).round = m.round - 1
+            else this.matches.get(m.par1.id).round = m.round
+        }
+        if(m.par2 instanceof MatchReference && !m.par2.getLoser) {
+            if(!m.par2.getLoser) this.matches.get(m.par2.id).round = m.round - 1
+            else this.matches.get(m.par2.id).round = m.round
+        }
+        return m.round
+    }
+
     #isLeafRound(r) {
         let res = true;
         r.forEach((m) => {
-            if(m.par1 instanceof MatchReference) res = false;
-            if(m.par2 instanceof MatchReference) res = false;
+            if(m.par1 instanceof MatchReference && !m.par2.getLoser) res = false;
+            if(m.par2 instanceof MatchReference && !m.par2.getLoser) res = false;
         })
         return res
     }
