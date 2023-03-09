@@ -48,7 +48,7 @@ function createBracketHTML(b, container) {
         let maxNumMatches = rounds[0].size
         let maxNumMatchesIndex = 0
 
-        if(rounds[1].size > maxNumMatches) {
+        if(rounds.length > 1 && rounds[1].size > maxNumMatches) {
             maxNumMatches = rounds[1].size
             maxNumMatchesIndex = 1
         }
@@ -61,7 +61,7 @@ function createBracketHTML(b, container) {
         }
 
         let counter = 0
-        if(rounds[0].size < 2*rounds[1].size) {
+        if(rounds.length > 1 && rounds[0].size < 2*rounds[1].size) {
             let row = document.createElement("tr")
             tableBody.appendChild(row)
             let td = document.createElement("td")
