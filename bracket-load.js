@@ -87,6 +87,11 @@ function createBracketHTML(b, container) {
             }
         })
 
+        for(counter; counter < tableBody.children.length; counter++) {
+            let row3 = document.createElement("td")
+            tableBody.children[counter].appendChild(row3)
+        }
+
         for(let i = 1; i < rounds.length; i++) {
             for(let j = 0; j < tableBody.children.length; j++) {
                 tableBody.children[j].appendChild(document.createElement("td"))
@@ -104,29 +109,41 @@ function createBracketHTML(b, container) {
                     firstLineRight = counter + 1
                 }
 
-                while(tableBody.children[counter].children[i*3 - 3].id !== m.par2.id) counter++
-                tableBody.children[counter].children[i*3 - 2].classList.add("line-right-below")
-                lastLineRight = counter - 1
+                if(m.par2 instanceof MatchReference) {
+                    while(tableBody.children[counter].children[i*3 - 3].id !== m.par2.id) counter++
+                    tableBody.children[counter].children[i*3 - 2].classList.add("line-right-below")
+                    lastLineRight = counter - 1
 
-                if(firstLineRight !== -1) {
-                    for(let j = firstLineRight; j <= lastLineRight; j++) {
-                        tableBody.children[j].children[i*3 - 2].classList.add("line-right")
+                    if(firstLineRight !== -1) {
+                        for(let j = firstLineRight; j <= lastLineRight; j++) {
+                            tableBody.children[j].children[i*3 - 2].classList.add("line-right")
+                        }
+
+                        let nextMatchIndex = Math.floor((firstLineRight + lastLineRight) / 2 + .5)
+
+                        tableBody.children[nextMatchIndex].children[i*3 - 1].classList.add("line-below")
+                        tableBody.children[nextMatchIndex].children[i*3].classList.add("bracket-team")
+                        tableBody.children[nextMatchIndex].children[i*3].id = m.id
+                        tableBody.children[nextMatchIndex + 1].children[i*3].classList.add("bracket-team")
+                        tableBody.children[nextMatchIndex + 1].children[i*3].id = m.id
+                    } else {
+                        tableBody.children[lastLineRight].children[i*3 - 1].classList.add("line-below")
+                        tableBody.children[lastLineRight].children[i*3].classList.add("bracket-team")
+                        tableBody.children[lastLineRight].children[i*3].id = m.id
+                        tableBody.children[lastLineRight].children[i*3].textContent = m.par1.name
+                        tableBody.children[lastLineRight + 1].children[i*3].classList.add("bracket-team")
+                        tableBody.children[lastLineRight + 1].children[i*3].id = m.id
                     }
-
-                    let nextMatchIndex = Math.floor((firstLineRight + lastLineRight) / 2 + .5)
-
-                    tableBody.children[nextMatchIndex].children[i*3 - 1].classList.add("line-below")
-                    tableBody.children[nextMatchIndex].children[i*3].classList.add("bracket-team")
-                    tableBody.children[nextMatchIndex].children[i*3].id = m.id
-                    tableBody.children[nextMatchIndex + 1].children[i*3].classList.add("bracket-team")
-                    tableBody.children[nextMatchIndex + 1].children[i*3].id = m.id
                 } else {
-                    tableBody.children[lastLineRight].children[i*3 - 1].classList.add("line-below")
-                    tableBody.children[lastLineRight].children[i*3].classList.add("bracket-team")
-                    tableBody.children[lastLineRight].children[i*3].id = m.id
-                    tableBody.children[lastLineRight].children[i*3].textContent = m.par1.name
-                    tableBody.children[lastLineRight + 1].children[i*3].classList.add("bracket-team")
-                    tableBody.children[lastLineRight + 1].children[i*3].id = m.id
+                    counter += 2
+                    tableBody.children[counter].children[i*3].classList.add("bracket-team")
+                    tableBody.children[counter].children[i*3].id = m.id
+                    tableBody.children[counter].children[i*3].textContent = m.par1.name
+                    counter++
+                    tableBody.children[counter].children[i*3].classList.add("bracket-team")
+                    tableBody.children[counter].children[i*3].id = m.id
+                    tableBody.children[counter].children[i*3].textContent = m.par2.name
+                    counter++
                 }
 
 
