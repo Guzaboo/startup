@@ -48,7 +48,7 @@ if(url === id) {
         // createBracketHTML(bracket.brackets[1], container)
 
         bracket.matches = new Map(Object.entries(bracket.matches))
-        if(bracket.elim > 1) addGrandFinal(table.children[0], bracket.final, table.children[0].children.length + 4, bracket)
+        if(bracket.elim > 1) addGrandFinal(table.children[0], bracket.final, table.children[0].children[0].children.length + 4, bracket)
     }
 }
 
