@@ -6,6 +6,7 @@ class Bracket {
     final // Match
     matches // Map from String to Match
     date // long
+    brackets //SimpleBracket[]
 
     constructor(name, participants, elim = 1, id, final, matches, date) {
         if(id === undefined) {
@@ -14,13 +15,14 @@ class Bracket {
             if(elim > 2) throw new Error("N-elim brackets haven't been implemented yet! Received: N=" + elim)
             
             this.name = name
-            let brackets = JSON.parse(localStorage.getItem("brackets"))
-            if(brackets === null) brackets = []
+            let bracketsStored = JSON.parse(localStorage.getItem("brackets"))
+            if(bracketsStored === null) bracketsStored = []
             this.id = this.#generateUUID()
             this.participants = participants;
             this.elim = elim
             this.matches = new Map()
             this.date = new Date().getTime()
+            this.brackets = []
 
             this.#generateBrackets()
         } else {
@@ -46,7 +48,7 @@ class Bracket {
         return new Match(par1, par2, m.id)
     }
 
-    getRounds = function() {
+    getRounds() {
         this.matches.get(this.final.id).round = this.#setMatchRounds(this.final)
         let r = new Map()
         r.set(this.final.id, this.final)
@@ -122,33 +124,40 @@ class Bracket {
     }
 
     #generateBrackets() {
-        this.final = this.#addMatch(this.participants[0], this.participants[1])
+        for(let i = 0; i < this.elim; i++) {
+            this.brackets.push(new SimpleBracket())
+        }
+
+        
         let numParticipants = this.participants.length
         let doubleElim = this.elim > 1
 
+        if(doubleElim && numParticipants < 3) throw new Error("Double elimination requires 3+ participants! Received: " + numParticipants)
+
         let wSeq
         let lSeq
-        let wFinal = this.final
+        let wFinal = this.#addMatch(this.participants[0], this.participants[1], this.brackets[0])
+        this.brackets[0].final = wFinal
         let lRoot
-
-        
-        if(doubleElim && numParticipants < 3) throw new Error("Double elimination requires 3+ participants! Received: " + numParticipants)
+        let lFinal
 
         if(numParticipants >= 3) {
             wSeq = winnersBracketSequence(numParticipants)
-            let m = this.#placeTeam(this.participants[2], wFinal, wSeq[0])
+            let m = this.#placeTeam(this.participants[2], wFinal, wSeq[0], this.brackets[0])
             if(doubleElim) {
-                lRoot = this.#addMatch(new MatchReference(wFinal.id, true), new MatchReference(m.id, true))
-                this.final = this.#addMatch(new MatchReference(wFinal.id, false), new MatchReference(lRoot.id, false))
+                lRoot = this.#addMatch(new MatchReference(wFinal.id, true), new MatchReference(m.id, true), this.brackets[1])
+                lFinal = lRoot
+                this.brackets[1].final = lFinal
             }
         }
 
         if(numParticipants >= 4) {
-            let m = this.#placeTeam(this.participants[3], wFinal, wSeq[1])
+            let m = this.#placeTeam(this.participants[3], wFinal, wSeq[1], this.brackets[0])
             if(doubleElim) {
-                let m2 = this.#addMatch(lRoot.par2, new MatchReference(m.id, true))
-                lRoot.par2 = new MatchReference(m2.id, false)
-                lRoot = m2
+                lRoot = this.#placeTeam(new MatchReference(m.id, true), lRoot, [0], this.brackets[1], this.brackets[0])
+                // let m2 = this.#addMatch(lRoot.par2, new MatchReference(m.id, true), this.brackets[1])
+                // lRoot.par2 = new MatchReference(m2.id, false)
+                // lRoot = m2
             }
         }
 
@@ -156,22 +165,49 @@ class Bracket {
             lSeq = losersBracketSequence(numParticipants)
 
             for(let i = 4; i < numParticipants; i++) {
-                let m = this.#placeTeam(this.participants[i], wFinal, wSeq[i - 2])
+                let m = this.#placeTeam(this.participants[i], wFinal, wSeq[i - 2], this.brackets[0])
                 if(doubleElim) {
-                    this.#placeTeam(new MatchReference(m.id, true), lRoot, lSeq[i - 4])
+                    this.#placeTeam(new MatchReference(m.id, true), lRoot, lSeq[i - 4], this.brackets[1], this.brackets[0])
                 }
             }
         }
-                //this.#placeTeamInLosers(this.participants[i], this.final, wSeq[i - 2])
+
+        if(doubleElim) {
+            this.final = this.#addMatch(new MatchReference(wFinal.id, false), new MatchReference(lFinal.id, false))
+        }
+
+        let numRounds = 0
+        this.brackets.forEach(b => {
+            numRounds = Math.max(numRounds, b.getMaxRound())
+        })
+
+        numRounds++
+
+        if(doubleElim) this.final.round = numRounds
+        else this.final = wFinal
+
+        this.brackets.forEach(b => b.flipRounds(numRounds)) // make first round 1 and last round numRounds - 1
+
+        
+                
     }
 
-    #addMatch(par1, par2) {
-        let m = new Match(par1, par2)
+    #addMatch(par1, par2, bracket) {
+        if(bracket === undefined) {
+            let m = new Match(par1, par2)
+            this.matches.set(m.id, m)
+            return m
+        } else {
+            let m = bracket.addMatchNewRound(par1, par2)
+            this.matches.set(m.id, m)
+            return m
+        }
+    }
+
+    #placeTeam(participant, startingMatch, path, bracket, upperBracket = undefined) { // participant = Participant, startingMatch = Match, path = int[]
+        let m = bracket.placeTeam(participant, startingMatch, path, upperBracket)
         this.matches.set(m.id, m)
         return m
-    }
-
-    #placeTeam(participant, startingMatch, path) { // participant = Participant, startingMatch = Match, path = int[]
         let matchPtr = startingMatch
         for(let i = 0; i < path.length - 1; i++) {
             if(path[i]) matchPtr = this.#findMatch(matchPtr.par1.id)
@@ -179,11 +215,11 @@ class Bracket {
         }
 
         if(path[path.length - 1]) {
-            let m = this.#addMatch(matchPtr.par1, participant)
+            let m = this.#addMatch(matchPtr.par1, participant, bracket)
             matchPtr.par1 = new MatchReference(m.id)
             return m
         } else {
-            let m = this.#addMatch(matchPtr.par2, participant)
+            let m = this.#addMatch(matchPtr.par2, participant, bracket)
             matchPtr.par2 = new MatchReference(m.id)
             return m
         }
@@ -210,6 +246,131 @@ class Bracket {
     }
 }
 
+class SimpleBracket {
+    final // Match
+    rounds // Round[]
+
+    constructor() {
+        this.rounds = []
+    }
+
+    addMatchNewRound(par1, par2) {
+        let roundNum = 1
+        if(this.rounds.length > 0) roundNum = this.rounds[this.rounds.length - 1].roundNum + 1
+        this.rounds.push(new Round(roundNum))
+        let m = this.rounds[this.rounds.length - 1].addMatch(par1, par2)
+        return m
+    }
+
+    placeTeam(participant, startingMatch, path, upperBracket = undefined) {
+        let matchPtr = startingMatch
+        for(let i = 0; i < path.length - 1; i++) {
+            if(path[i]) {
+                matchPtr = this.#findMatch(matchPtr.par1.id) 
+            } 
+            else matchPtr = this.#findMatch(matchPtr.par2.id)
+        }
+
+        let roundIndex = this.findMatchRoundIndex(matchPtr.id)
+        
+        if(roundIndex === this.rounds.length - 1) {
+            // add new round
+            this.rounds.push(new Round(this.rounds[roundIndex].roundNum + 1))
+        }
+
+        roundIndex++ // change roundIndex to the index of the round that the match we are adding should be in
+
+        let m
+        if(path[path.length - 1]) {
+            m = this.rounds[roundIndex].addMatch(matchPtr.par1, participant)
+            matchPtr.par1 = new MatchReference(m.id)
+        } else {
+            m = this.rounds[roundIndex].addMatch(matchPtr.par2, participant)
+            matchPtr.par2 = new MatchReference(m.id)
+        }
+
+        if(upperBracket !== undefined) {
+            if(m.par1 instanceof MatchReference && participant.getLoser) {
+                let upperRoundIndex = upperBracket.findMatchRoundIndex(m.par1.id)
+                let upperRound = upperBracket.rounds[upperRoundIndex].roundNum
+                let lowerRound = this.rounds[roundIndex].roundNum
+                if(upperRound < lowerRound) upperBracket.shiftRounds(upperRoundIndex, lowerRound - upperRound)
+            }
+            if(m.par2 instanceof MatchReference && participant.getLoser) {
+                let upperRound = upperBracket.rounds[upperBracket.findMatchRoundIndex(m.par2.id)].roundNum
+                let lowerRound = this.rounds[roundIndex].roundNum
+                if(upperRound < lowerRound) upperBracket.shiftRounds(upperRound, lowerRound - upperRound)
+            }
+
+        }
+
+        return m
+    }
+
+    shiftRounds(start, amount) { // increment roundNum for every round from index start to index rounds.length - 1 by amount
+        for(let i = start; i < this.rounds.length; i++) {
+            this.rounds[i].roundNum += amount
+        }
+    }
+
+    #findMatch(id) {
+        let r = this.findMatchRoundIndex(id)
+        if(r === undefined) return undefined
+        return this.rounds[r].get(id)
+    }
+
+    findMatchRoundIndex(id) {
+        for(let i = 0; i < this.rounds.length; i++) {
+            if(this.rounds[i].get(id) !== undefined) return i
+        }
+        return undefined
+    }
+
+    getMaxRound() {
+        let maxRound = 0
+        this.rounds.forEach(r => maxRound = Math.max(maxRound, r.roundNum))
+
+        return maxRound
+    }
+
+    getMaxRound() {
+        let maxRound = 0
+        this.rounds.forEach(r => maxRound = Math.max(maxRound, r.roundNum))
+
+        return maxRound
+    }
+
+    flipRounds(numRounds) {
+        this.rounds.forEach(r => {
+            r.roundNum = numRounds - r.roundNum
+            r.matches.forEach(m => m.round = r.roundNum)
+        })
+    }
+}
+
+class Round {
+    matches // Map<String, Match>
+    roundNum // int (first round in bracket will have the greatest roundNum)
+
+    constructor(num) {
+        this.matches = new Map()
+        this.roundNum = num
+    }
+
+    addMatch(par1, par2) {
+        let m = new Match(par1, par2)
+        this.set(m.id, m)
+        return m
+    }
+
+    get(id) {
+        return this.matches.get(id)
+    }
+
+    set(id, match) {
+        this.matches.set(id, match)
+    }
+}
 class MatchReference {
     id // String
     getLoser // boolean
@@ -226,6 +387,7 @@ class Match {
     id // String
     par1 // MatchReference or Participant
     par2 // MatchReference or Participant
+    round // int - gets initialized after the entire bracket is generated
 
     constructor(par1, par2, id = "M" + ++matchID) {
         this.id = id
