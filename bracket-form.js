@@ -34,9 +34,6 @@
     })
 })()
 
-let nameBox = document.querySelector('#bracketName')
-let participantsBox = document.querySelector('#participantsList')
-
 function hasEnoughTeams(p, double = false) {
     if(double) return /.+\n+.+\n+.+/im.test(p)
     return /.+\n+.+/im.test(p)
@@ -63,15 +60,16 @@ function randomizeSeeds(p) {
 }
 
 function generateBracket() {
-    if(nameBox.classList.contains("is-invalid")
-    || participantsBox.classList.contains("is-invalid")) return
+    let nameBox = document.querySelector('#bracketName')
+    let participantsBox = document.querySelector('#participantsList')
+    let doubleElimCheck = document.querySelector('#doubleElim')
+
+    if(nameBox.value === ''
+    || !hasEnoughTeams(participantsBox.value, doubleElimCheck.checked)) return
     let participants = getParticipants()
     
     let randomSeedsCheck = document.querySelector('#randomizeSeeds')
     if(randomSeedsCheck.checked) participants = randomizeSeeds(participants)
-
-    let nameBox = document.querySelector('#bracketName')
-    let doubleElimCheck = document.querySelector('#doubleElim')
 
     let name = nameBox.value
 
