@@ -35,3 +35,6 @@ From this assignment, I got some valuable practice using the bootstrap framework
 
 ### Assignment: Simon JavaScript
 It's pretty neat how easy it is to use localStorage to save/access data across pages. It's also nice how easy it is to load and play audio files. It really does seem like it was built for web programming!
+
+### Assignment: Startup JavaScript
+I'm thankful for the practice I got using functions that take other functions as parameters, such as forEach. I also learned the value of good planning before implementing code.
