@@ -7,7 +7,7 @@ let brackets = JSON.parse(localStorage.getItem("brackets"))
 let bracketList = document.querySelector(".bracket-list")
 
 if(brackets !== null) {
-    bracketList.innerHTML = ""
+    //bracketList.innerHTML = ""
     brackets = sortByDate(brackets)
     brackets.forEach(b => {
         let bracket = JSON.parse(localStorage.getItem(b))
@@ -61,6 +61,8 @@ if(brackets !== null) {
     })
 }
 
+checkEmpty()
+
 function deleteBracket(e) {
     console.log(e)
     console.log(e.parentElement.id)
@@ -68,6 +70,17 @@ function deleteBracket(e) {
     localStorage.setItem("brackets", JSON.stringify(brackets))
     localStorage.removeItem(e.parentElement.id)
     bracketList.removeChild(e.parentElement)
+
+    checkEmpty()
+}
+
+function checkEmpty() {
+    if(bracketList.children.length == 0) {
+        let p = document.createElement("p")
+        p.classList.add("bracket-list-filler")
+        p.innerHTML = "Your brackets will appear here! <a href=\"bracket-wizard.html\">Create one now!</a>"
+        bracketList.appendChild(p)
+    }
 }
 
 function loadBracket(e) {
