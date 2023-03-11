@@ -328,7 +328,7 @@ function addMatchHTML(tableBody, rowNum, colNum, m) {
 
     tableBody.children[rowNum + 1].children[colNum].classList.add("bracket-team")
     tableBody.children[rowNum + 1].children[colNum].id = m.id
-    if(isParticipant(m.par2)) tableBody.children[rowNum].children[colNum].textContent = m.par2.name
+    if(isParticipant(m.par2)) tableBody.children[rowNum + 1].children[colNum].textContent = m.par2.name
 }
 
 function expandTable(tableBody, rowNum, colNum) {
