@@ -51,7 +51,7 @@ if(url === id) {
         // createBracketHTML(bracket.brackets[1], container)
 
         bracket.matches = new Map(Object.entries(bracket.matches))
-        if(bracket.elim > 1) addGrandFinal(table.children[0], bracket.final, table.children[0].children[0].children.length + 4, bracket)
+        if(bracket.elim > 1) addGrandFinal(table.children[0], bracket.final, table.children[0].children[0].children.length + 2, bracket)
     }
 }
 
@@ -342,7 +342,7 @@ function expandCols(tableBody, colNum) {
 }
 
 function expandRows(tableBody, rowNum) {
-    if(rowNum > 0) for(let i = tableBody.children.length; i <= rowNum + 1; i++) tableBody.appendChild(document.createElement("tr"))
+    if(rowNum > 0) for(let i = tableBody.children.length; i < rowNum + 1; i++) tableBody.appendChild(document.createElement("tr"))
     else for(; rowNum < 0; rowNum++) tableBody.insertBefore(document.createElement("tr"), tableBody.children[0])
 
     let expandTo = Math.max(tableBody.children[tableBody.children.length - 1].length, tableBody.children[0].children.length)
