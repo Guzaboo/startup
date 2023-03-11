@@ -316,8 +316,9 @@ function connectMatchFromAbove(tableBody, y1, x1, y2, x2) {
 }
 
 function addMatchHTML(tableBody, rowNum, colNum, m) {
-    if(rowNum < 0) expandTable(tableBody, rowNum, colNum)
-    else expandTable(tableBody, rowNum + 1, colNum)
+    let expandTo = Math.max(colNum, tableBody.children[0].children.length - 1)
+    if(rowNum < 0) expandTable(tableBody, rowNum, expandTo)
+    else expandTable(tableBody, rowNum + 1, expandTo)
 
     if(rowNum < 0) rowNum = 0 // we can do this because expandTable would have added rows above to accommodate
 
