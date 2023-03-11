@@ -1,9 +1,11 @@
+
 (function () {
     'use strict'
   
-    let forms = document.querySelectorAll('.needs-validation')
     let nameBox = document.querySelector('#bracketName')
     let participantsBox = document.querySelector('#participantsList')
+
+    let forms = document.querySelectorAll('.needs-validation')
     let doubleElimCheck = document.querySelector('#doubleElim')
     let participantsInvalidMessage = document.querySelector('#participantsList ~ .invalid-tooltip')
 
@@ -32,6 +34,9 @@
     })
 })()
 
+let nameBox = document.querySelector('#bracketName')
+let participantsBox = document.querySelector('#participantsList')
+
 function hasEnoughTeams(p, double = false) {
     if(double) return /.+\n+.+\n+.+/im.test(p)
     return /.+\n+.+/im.test(p)
@@ -58,6 +63,8 @@ function randomizeSeeds(p) {
 }
 
 function generateBracket() {
+    if(nameBox.classList.contains("is-invalid")
+    || participantsBox.classList.contains("is-invalid")) return
     let participants = getParticipants()
     
     let randomSeedsCheck = document.querySelector('#randomizeSeeds')
