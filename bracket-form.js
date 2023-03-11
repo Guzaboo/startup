@@ -13,10 +13,15 @@
     Array.prototype.slice.call(forms).forEach(function (form) {
         form.addEventListener('submit', function (event) {
             console.log(nameBox.textContent.toString())
+
+            event.preventDefault()
+            event.stopPropagation()
+
+            let generate = true
+
             if(nameBox.value === '') {
                 nameBox.classList.add('is-invalid')
-                event.preventDefault()
-                event.stopPropagation()
+                generate = false
             } else {
                 nameBox.classList.remove('is-invalid')
             }
@@ -25,11 +30,12 @@
                 if(doubleElimCheck.checked) participantsInvalidMessage.textContent = 'Double elimination brackets require at least three teams.'
                 else participantsInvalidMessage.textContent = 'Single elimination brackets require at least two teams.'
                 participantsBox.classList.add('is-invalid')
-                event.preventDefault()
-                event.stopPropagation()
+                generate = false
             } else {
                 participantsBox.classList.remove('is-invalid')
             }
+
+            if(generate) generateBracket()
         }, false)
     })
 })()
