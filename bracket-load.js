@@ -44,12 +44,6 @@ if(url === id) {
 
         table.appendChild(mergeTableBodies(tableBodies))
 
-        // let container = document.createElement("div")
-        // container.classList.add("bracket-container")
-
-        // bracket.brackets[1].matches = bracket.matches
-        // createBracketHTML(bracket.brackets[1], container)
-
         bracket.matches = new Map(Object.entries(bracket.matches))
         if(bracket.elim > 1) addGrandFinal(table.children[0], bracket.final, table.children[0].children[0].children.length + 2, bracket)
     }
@@ -93,33 +87,15 @@ function mergeTwoTableBodies(body1, body2) {
 }
 
 function createBracketHTML(bracket, tableBody = document.createElement("tbody")) {
-    //let container = document.createElement("div")
-    //container.classList.add("bracket-container")
-
+    let rounds = getRounds(bracket)
     
+    let first = 0
+    while(rounds[first].size === 0) first++
 
+    generateFirstTwoRoundsHTML(tableBody, rounds, bracket, first)
 
-    if(/*b.elim === 1*/true) {
-        //let rounds = b.getRounds()
-        let rounds = getRounds(bracket)
-        
-        let first = 0
-        while(rounds[first].size === 0) first++
-
-        generateFirstTwoRoundsHTML(tableBody, rounds, bracket, first)
-
-        for(let i = first + 2; i < rounds.length; i++) {
-            generateNextRound(tableBody, rounds[i], i * 3, bracket)
-        }
-
-        //console.log(tableBody.children[3])
-
-        //tr.textContent = JSON.stringify(rounds.map((r) => Object.fromEntries(r)))
-
-    } else {
-        let tr = document.createElement("tr")
-        tr.textContent = "Double Elim not implemented yet"
-        tableBody.appendChild(tr)
+    for(let i = first + 2; i < rounds.length; i++) {
+        generateNextRound(tableBody, rounds[i], i * 3, bracket)
     }
 
     return tableBody
@@ -134,7 +110,6 @@ function getRounds(bracket) {
     }
 
     populateRounds(rounds, bracket.matches, bracket.final)
-    //bracket.matches.forEach(m => rounds[m[1].round - 1].set(m[1].id, m[1]))
 
     return rounds
 }
@@ -175,19 +150,6 @@ function generateReferenceRound(tableBody, round, tableCol) {
     round.forEach((m) => {
         addMatchHTML(tableBody, counter, tableCol, m)
         counter += 3
-
-        // tableBody.children[counter].children[tableCol].classList.add("bracket-team")
-        // tableBody.children[counter].children[tableCol].textContent = m.par1.name
-        // tableBody.children[counter].children[tableCol].id = m.id
-        // counter++
-        
-
-        // tableBody.children[counter].children[tableCol].classList.add("bracket-team")
-        // tableBody.children[counter].children[tableCol].textContent = m.par2.name
-        // tableBody.children[counter].children[tableCol].id = m.id
-        // counter++
-
-        // counter++
     })
 }
 
@@ -198,9 +160,6 @@ function addGrandFinal(tableBody, final, tableCol, bracket) {
     let counter = 0
 
     expandCols(tableBody, tableCol)
-    // Array.from(tableBody.children).forEach(row => {
-    //     for(let i = row.children.length; i <= tableCol; i++) row.appendChild(document.createElement("td"))
-    // })
 
     prevMatchRoundTableIndex = bracket.matches.get(final.par1.id).round*3
     while(tableBody.children[counter].children[prevMatchRoundTableIndex - 3].id !== final.par1.id) counter++
@@ -222,10 +181,6 @@ function addGrandFinal(tableBody, final, tableCol, bracket) {
     }
 
     addMatchHTML(tableBody, nextMatchIndex, tableCol, final)
-    // tableBody.children[nextMatchIndex].children[tableCol].classList.add("bracket-team")
-    // tableBody.children[nextMatchIndex].children[tableCol].id = final.id
-    // tableBody.children[nextMatchIndex + 1].children[tableCol].classList.add("bracket-team")
-    // tableBody.children[nextMatchIndex + 1].children[tableCol].id = final.id
 }
 
 function generateNextRound(tableBody, round, tableCol, bracket) {
@@ -243,10 +198,6 @@ function generateNextRound(tableBody, round, tableCol, bracket) {
     }
 
     expandCols(tableBody, tableCol)
-    // for(let i = 0; i < tableBody.children.length; i++) { // ensure there are enough columns in each row so we don't go out of bounds
-    //     let tableRow = tableBody.children[i]
-    //     for(let j = tableRow.children.length; j <= tableCol; j++) tableRow.appendChild(document.createElement("td"))
-    // }
 
     let counter = 0
     round.forEach((m) => {
@@ -277,20 +228,10 @@ function generateNextRound(tableBody, round, tableCol, bracket) {
                 }
 
                 addMatchHTML(tableBody, nextMatchIndex, tableCol, m)
-                // tableBody.children[nextMatchIndex].children[tableCol].classList.add("bracket-team")
-                // tableBody.children[nextMatchIndex].children[tableCol].id = m.id
-                // tableBody.children[nextMatchIndex + 1].children[tableCol].classList.add("bracket-team")
-                // tableBody.children[nextMatchIndex + 1].children[tableCol].id = m.id
             } else {
                 addMatchHTML(tableBody, lastLineRight, tableCol, m)
 
                 if(lastLineRight < 0) lastLineRight = 0 // we can do this because addMatchHTML would have added rows above to accommodate
-
-                // tableBody.children[lastLineRight].children[tableCol].classList.add("bracket-team")
-                // tableBody.children[lastLineRight].children[tableCol].id = m.id
-                // tableBody.children[lastLineRight].children[tableCol].textContent = m.par1.name
-                // tableBody.children[lastLineRight + 1].children[tableCol].classList.add("bracket-team")
-                // tableBody.children[lastLineRight + 1].children[tableCol].id = m.id
 
                 for(let j = prevMatchRoundTableIndex - 1; j <= tableCol - 1; j++) {
                     tableBody.children[lastLineRight].children[j].classList.add("line-below")
@@ -378,6 +319,7 @@ function generatePreviousRound(tableBody, round, tableCol, bracket) {
                     tableBody.children[i].children[tableCol + 1].classList.add("line-right")
                     tableBody.children[i - 1].children[tableCol + 1].classList.add("line-right")
                     tableBody.children[i - 2].children[tableCol + 1].classList.add("line-below")
+                    
                     break
                 } else if(referencesMatch(m2.par2) && !m2.par2.getLoser && m2.par2.id === id) {
                     // put m before and below m2!
@@ -385,12 +327,6 @@ function generatePreviousRound(tableBody, round, tableCol, bracket) {
                     tableBody.children[i + 1].children[tableCol + 1].classList.add("line-right-below")
 
                     addMatchHTML(tableBody, i + 1, tableCol, m)
-
-                    // tableBody.children[i + 1].children[tableCol].classList.add("bracket-team")
-                    // tableBody.children[i + 2].children[tableCol].classList.add("bracket-team")
-                    
-                    // if(isParticipant(m.par1)) tableBody.children[i + 1].children[tableCol].textContent = m.par1.name
-                    // if(isParticipant(m.par2)) tableBody.children[i + 2].children[tableCol].textContent = m.par2.name
 
                     break
                 }

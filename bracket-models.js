@@ -48,81 +48,6 @@ class Bracket {
         return new Match(par1, par2, m.id)
     }
 
-    getRounds() {
-        this.matches.get(this.final.id).round = this.#setMatchRounds(this.final)
-        let r = new Map()
-        r.set(this.final.id, this.final)
-
-        let rounds = [r]
-        let backlog = []
-        let numRounds = this.final.round
-        while(rounds.length < numRounds) {
-            r = new Map()
-            // put all the matches linked to from matches in rounds[0] into the new map
-            let lastR = rounds[0]
-
-            for(let i = 0; i < backlog.length; i++) {
-                if(backlog[i].round == numRounds - rounds.length) {
-                    r.set(backlog[i].id, backlog[i])
-                    backlog.splice(i--, 1)
-                }
-            }
-
-            lastR.forEach((m) => {
-                if(m.par1 instanceof MatchReference && !m.par1.getLoser) {
-                    if(this.matches.get(m.par1.id).round + 1 == m.round) r.set(m.par1.id, this.matches.get(m.par1.id))
-                    else backlog.push(this.matches.get(m.par1.id))
-                }
-                if(m.par2 instanceof MatchReference && !m.par2.getLoser) {
-                    if(this.matches.get(m.par2.id).round + 1 == m.round) r.set(m.par2.id, this.matches.get(m.par2.id))
-                    else backlog.push(this.matches.get(m.par2.id))
-                }
-            })
-
-            // insert the new map at the start of rounds
-            rounds.unshift(r)
-        }
-
-        return rounds
-    }
-
-    #setMatchRounds(m) {
-        let par1Height = 0
-        let par2Height = 0
-        if(m.par1 instanceof MatchReference) {
-            par1Height = this.#setMatchRounds(this.matches.get(m.par1.id))
-            if(m.par1.getLoser) par1Height--
-        }
-        if(m.par2 instanceof MatchReference) {
-            par2Height = this.#setMatchRounds(this.matches.get(m.par2.id))
-            if(m.par2.getLoser) par2Height--
-        }
-        this.#setMatchRoundsBacktrack(m, Math.max(par1Height, par2Height) + 1)
-        return m.round
-    }
-
-    #setMatchRoundsBacktrack(m, height) {
-        m.round = height
-        if(m.par1 instanceof MatchReference) {
-            if(!m.par1.getLoser) this.#setMatchRoundsBacktrack(this.matches.get(m.par1.id), height - 1)
-            else this.#setMatchRoundsBacktrack(this.matches.get(m.par1.id), height)
-        }
-        if(m.par2 instanceof MatchReference && !m.par2.getLoser) {
-            if(!m.par2.getLoser) this.#setMatchRoundsBacktrack(this.matches.get(m.par2.id), height - 1)
-            else this.#setMatchRoundsBacktrack(this.matches.get(m.par2.id), height)
-        }
-
-    }
-
-    #isLeafRound(r) {
-        let res = true;
-        r.forEach((m) => {
-            if(m.par1 instanceof MatchReference && !m.par2.getLoser) res = false;
-            if(m.par2 instanceof MatchReference && !m.par2.getLoser) res = false;
-        })
-        return res
-    }
-
     #generateBrackets() {
         for(let i = 0; i < this.elim; i++) {
             this.brackets.push(new SimpleBracket())
@@ -155,9 +80,6 @@ class Bracket {
             let m = this.#placeTeam(this.participants[3], wFinal, wSeq[1], this.brackets[0])
             if(doubleElim) {
                 lRoot = this.#placeTeam(new MatchReference(m.id, true), lRoot, [0], this.brackets[1], this.brackets[0])
-                // let m2 = this.#addMatch(lRoot.par2, new MatchReference(m.id, true), this.brackets[1])
-                // lRoot.par2 = new MatchReference(m2.id, false)
-                // lRoot = m2
             }
         }
 
@@ -187,9 +109,6 @@ class Bracket {
         else this.final = wFinal
 
         this.brackets.forEach(b => b.flipRounds(numRounds)) // make first round 1 and last round numRounds - 1
-
-        
-                
     }
 
     #addMatch(par1, par2, bracket) {
@@ -208,25 +127,6 @@ class Bracket {
         let m = bracket.placeTeam(participant, startingMatch, path, upperBracket)
         this.matches.set(m.id, m)
         return m
-        let matchPtr = startingMatch
-        for(let i = 0; i < path.length - 1; i++) {
-            if(path[i]) matchPtr = this.#findMatch(matchPtr.par1.id)
-            else matchPtr = this.#findMatch(matchPtr.par2.id)
-        }
-
-        if(path[path.length - 1]) {
-            let m = this.#addMatch(matchPtr.par1, participant, bracket)
-            matchPtr.par1 = new MatchReference(m.id)
-            return m
-        } else {
-            let m = this.#addMatch(matchPtr.par2, participant, bracket)
-            matchPtr.par2 = new MatchReference(m.id)
-            return m
-        }
-    }
-
-    #findMatch(id) {
-        return this.matches.get(id)
     }
 
     #generateUUID() { // Public Domain/MIT

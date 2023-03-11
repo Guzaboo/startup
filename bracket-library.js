@@ -7,7 +7,6 @@ let brackets = JSON.parse(localStorage.getItem("brackets"))
 let bracketList = document.querySelector(".bracket-list")
 
 if(brackets !== null) {
-    //bracketList.innerHTML = ""
     brackets = sortByDate(brackets)
     brackets.forEach(b => {
         let bracket = JSON.parse(localStorage.getItem(b))
