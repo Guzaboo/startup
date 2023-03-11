@@ -427,4 +427,11 @@ h1 {
 
 .bracket-list-filler {
     margin: 0;
+    font-size: 3.5vw;
+}
+
+@media(min-width: 450px) {
+    .bracket-list-filler {
+        font-size: var(--bs-body-font-size);
+    }
 }
